@@ -1,70 +1,154 @@
 # W2-PM-FINAL-CYBERSECURITY-ETHICAL-HACKING-I-NETWORKWALKS
+*PENETRATION TESTING REPORT*
 
-PENETRATION TESTING ASSESSMENT REPORT
+*Footprinting, Reconnaissance & Network Scanning*
 
-Phase 1 & 2: Reconnaissance, Footprinting, and Network Discovery
-Document ID: W2-PM-FINAL | Track: Cybersecurity & Ethical Hacking | Organization: NETWORKWALKS
+*W2-PM-FINAL | CYBERSECURITY & ETHICAL HACKING | NETWORKWALKS*
 
-Assessment Attribute	Information
-Security Analyst	OLABIYI ABIOLA MUNIRAT
-Internship Track	Cybersecurity & Ethical Hacking Internship
-Cohort / Batch	Batch B084 – NETWORKWALKS
-Submission Date	11 November 2026
-Lab Modules	W2-PM1 (Kali Linux Recon Suite) & W2-PM5 (Zenmap Discovery)
-External Target	http://networkwalks.com
-Internal Scope	Local VirtualBox Host-Only Virtual Network
-Authorization	Approved educational lab environment & self-managed virtual network
-Testing Stages	Passive/Active Footprinting & Local Host Enumeration
+Field	Details
+Pentester Name	Olabiyi Abiola Munirat
+Program	Cybersecurity & Ethical Hacking Internship
+Batch	B084 – NETWORKWALKS
+Report Date	11 November 2026
+Target Domain	http://networkwalks.com
+Internal Network Target	My own VirtualBox Host-Only Network
+Permission	Authorized educational testing / personally controlled lab
+Phases Covered	Phase 1: Reconnaissance & Footprinting; Phase 2: Scanning & Network Discovery
+
+---
+
+1. Liability Disclaimer
+
+This report was prepared for learning and research purposes only.
+
+All tests were carried out on systems I was authorized to test, or on my own personal lab network. I did not attempt any unauthorized access, exploitation, or harmful activity.
+
+The tools and methods described here should only be used within an approved scope. Accessing systems without permission can have legal consequences, and the user is responsible for using this knowledge lawfully.
+
+1. Introduction
+
+This report documents what I did in Week 2 of my Cybersecurity and Ethical Hacking Internship with NETWORKWALKS, Batch B084.
+
+I focused on two stages of penetration testing:
+
+1. *Footprinting and Reconnaissance:* Collecting public information about a target domain using different Kali Linux tools.
+2. *Scanning and Network Discovery:* Finding active devices on my own local network using Zenmap.
+
+For the scanning part, I used Kali Linux inside Oracle VirtualBox on my Windows laptop. I first checked my network settings, then ran a Ping Scan with Zenmap. The scan found three live hosts on my Host-Only network.
+
+The aim was to learn how professionals gather information about a target, find active devices, and record possible risks before moving to advanced testing.
+
+1. Tools and Technologies Used
+
+Tool	Purpose
+Kali Linux	Environment for reconnaissance
+Oracle VirtualBox	Running Kali Linux as a virtual machine
+WHOIS	Domain registration information
+WhatWeb	Website technology identification
+Nslookup	Domain to IP resolution
+Curl	Checking HTTP response headers
+Wafw00f	Checking for Web Application Firewall
+DNSRecon	DNS enumeration
+Zenmap	Graphical interface for Nmap
+Nmap	Discovering live hosts
+Windows CMD	Checking Windows network configuration
+Npcap	Supporting packet capture on Windows
+
+1. Activities Performed
+
+4.1 Footprinting and Reconnaissance
+
+Target domain: *networkwalks.com*
+
+*4.1.1 WHOIS*
+Command: `whois networkwalks.com`
+I checked the registrar, creation and expiry dates, status, and name servers.
+
+*4.1.2 WhatWeb*
+Command: `whatweb networkwalks.com`
+I checked the CMS, web server, and other technologies the site uses.
 
 
-1. Authorization & Scope Disclaimer
+*4.1.3 Nslookup*
+Command: `nslookup networkwalks.com`
+I checked the IP address the domain resolves to.
 
-This assessment was conducted strictly for academic and skill-development purposes as part of my internship training. Every test documented herein was performed either against an authorized training domain or within a private virtual network under my direct control. No intrusive exploitation, service disruption, or unauthorized access was attempted. All methodologies outlined in this document should only be applied within legally sanctioned engagements.
 
-2. Executive Summary & Objectives
+*4.1.4 Curl*
+Command: `curl -I https://networkwalks.com`
+I checked the HTTP status, server, and content-type headers.
 
-This document outlines the practical lab exercises I completed during the second week of my NETWORKWALKS Cybersecurity and Ethical Hacking Internship (Batch B084). The objective was to execute the foundational stages of a structured penetration test:
-• Information Gathering (Footprinting): Collecting publicly accessible infrastructure, DNS, and web technology data for a target domain using command-line reconnaissance tools in Kali Linux.
-• Host Discovery (Scanning): Mapping active endpoints across an isolated internal subnet using Zenmap.
 
-For the internal network phase, I configured a lab environment consisting of a Windows host operating system and a Kali Linux virtual machine hosted in Oracle VirtualBox. After verifying the local IP addressing scheme and subnet boundaries, I executed a host discovery sweep via Zenmap, which successfully identified three active devices on the Host-Only segment.
+*4.1.5 Wafw00f*
+Command: `wafw00f https://networkwalks.com`
+I checked if the site is protected by a WAF.
 
-3. Testing Environment & Toolset
+*4.1.6 DNSRecon*
+Command: `dnsrecon -d networkwalks.com`
+I checked A, NS, MX, and TXT 
 
-• Operating Environment: Kali Linux deployed inside Oracle VirtualBox alongside a Windows host OS.
-• Domain & DNS Enumeration: WHOIS (registration records), Nslookup (IP resolution), and DNSRecon (DNS record mapping).
-• Web & Application Profiling: WhatWeb (CMS and technology fingerprinting), Curl (HTTP header inspection), and Wafw00f (Web Application Firewall detection).
-• Network Mapping: Zenmap / Nmap (active host discovery) and Windows CMD (ipconfig interface verification).
+4.2 Network Scanning with Zenmap
 
-4. Technical Execution & Findings
+*4.2.1 Network Environment*
+My setup:
+- Kali eth0: 10.0.2.15 (NAT)
+- Kali eth1: 192.168.56.102 (Host-Only)
+- Windows Host-Only Adapter: 192.168.56.1
+- Network: 192.168.56.0/24, Subnet Mask: 255.255.255.0, Range: 192.168.56.1 - 192.168.56.254
 
-4.1 External Footprinting & Reconnaissance
+*4.2.2 Identifying My IP*
+Command on Windows CMD: `ipconfig`
+I confirmed my Host-Only adapter was 192.168.56.1 with subnet 255.255.255.0.
 
-• Target URL: http://networkwalks.com / https://networkwalks.com
-4.1.1 Domain Registration Lookup (WHOIS)
 
-4.2 Internal Network Discovery (Zenmap)
+*4.2.3 Zenmap Configuration*
+Target: `192.168.56.0/24`
+Profile: Ping Scan
+Command: `nmap -sn 192.168.56.0/24`
+The `-sn` option does host discovery only, without port scanning.
 
-Before initiating the scan, I inspected the network adapter properties on my host and guest machines to define the exact target range
-5. Troubleshooting & Lessons Learned
-• Working through these labs presented a few technical hurdles that sharpened my attention to detail:
-• Specifying URL Protocols in Wafw00f: My initial scan failed because I omitted the https:// prefix from the target domain. Running the command with the full protocol (wafw00f https://networkwalks.com) resolved the issue and successfully identified a ModSecurity Web Application Firewall.
-• Interpreting HTTP Redirections in WhatWeb: Seeing two separate output blocks in WhatWeb was initially confusing. Closer inspection revealed that the server automatically redirects standard HTTP traffic (301 Moved Permanently) to an encrypted HTTPS endpoint (200 OK).
-• Correlating Zenmap Results with Host Interfaces: Reading the raw scan output at first felt overwhelming. By switching to Zenmap’s Topology view and cross-referencing the discovered IP addresses against my Windows ipconfig output, I accurately mapped each live host on my virtual network.
+*4.2.4 Network Topology*
+I opened the Topology tab in Zenmap to view the visual layout of the discovered hosts.
+*Evidence:* screenshots/09-network-topology.png
 
-6. Preliminary Risk Observations
+1. Risk Analysis
 
-The findings gathered during this phase represent informational observations rather than verified security flaws, as no active exploitation was conducted. However, publicly visible details—such as web server headers, underlying technologies, and DNS records—can assist an adversary in profiling an organization's attack surface if left unhardened. The presence of a Web Application Firewall provides a strong defensive layer, though proper rule tuning remains essential.
+No.	Finding	Impact	Risk
+1	Website technologies visible via WhatWeb	Attackers can identify components to review	Medium
+2	Public DNS information	Helps attacker understand infrastructure	Low
+3	HTTP headers expose technical info	Aids further fingerprinting	Low
+4	WAF information visible	Reveals defensive setup	Low
+5	3 live hosts found on local network	Unknown devices need investigation	Medium
+6	Shared Host-Only subnet	Misconfiguration could expose lab devices	Low
 
-7. Security Hardening Recommendations
+No exploitation was performed. These are observations only.
 
-To minimize information exposure and strengthen network visibility, the following defensive practices are recommended:
-• Minimize Banner & Header Exposure: Configure web servers to suppress detailed software version numbers and enforce strict HTTP security headers (such as HSTS and X-Frame-Options).
-• Maintain Patch Hygiene: Conduct routine software and CMS audits to ensure all public-facing components run supported, patched versions.
-• Harden DNS & WAF Controls: Periodically review public DNS records to remove stale entries, and continuously monitor ModSecurity WAF logs for anomalous traffic patterns.
-• Enforce Internal Network Visibility: Maintain up-to-date asset inventories, restrict unauthorized network access, and routinely scan internal subnets to detect rogue devices.
+1. Recommendations
 
-8. Conclusion
+2. Review publicly exposed technologies regularly.
+3. Keep CMS, plugins, and web apps updated.
+4. Configure secure HTTP headers and remove unnecessary ones.
+5. Review DNS records periodically.
+6. Configure and monitor WAF properly.
+7. Do regular network discovery to find new devices.
+8. Investigate any unexpected device found.
+9. Keep updated network documentation.
+10. Restrict network access to authorized devices only.
+11. Always test within an approved scope.
 
-Completing the Week 2 practical labs demonstrated how structured reconnaissance and network scanning establish the groundwork for any security assessment.
-By combining passive domain profiling with active local host discovery, I gained hand’s on experience in accurately mapping an environment's digital footprint before moving into deeper vulnerability analysis.
+12. Conclusion
+
+In Week 2, I learned how to use WHOIS, WhatWeb, Nslookup, Curl, Wafw00f, and DNSRecon for footprinting, and Zenmap for network discovery.
+
+I confirmed my Host-Only network as 192.168.56.0/24 and discovered three live hosts using `nmap -sn 192.168.56.0/24`.
+
+I also learned the difference between NAT and Host-Only networking in VirtualBox, and how to read Zenmap topology.
+
+Most importantly, I learned that reconnaissance is the foundation of penetration testing — you must understand the target environment before any further assessment.
+
+This practical improved my confidence in using Kali Linux, Windows networking tools, and Zenmap for authorized testing.
+*PROGRAM:* Cybersecurity & Ethical Hacking Internship
+*ORGANIZATION:* NETWORKWALKS
+*BATCH:* B084
+*REPORT:* W2-PM-FINAL
+*AUTHOR:* Olabiyi Abiola Munirat
